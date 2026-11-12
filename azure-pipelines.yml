@@ -13,7 +13,7 @@ steps:
   - task: NodeTool@0
     inputs:
       versionSpec: '20.x'
-  - script: npm ci
+  - script: npm install
     displayName: Install dependencies
   - script: npx playwright install --with-deps chromium firefox
     displayName: Install browsers
