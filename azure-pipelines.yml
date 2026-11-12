@@ -1,0 +1,36 @@
+# Same suite on Azure DevOps: smoke on every PR, full regression on main.
+trigger:
+  branches:
+    include: [main]
+pr:
+  branches:
+    include: ['*']
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+  - script: npm ci
+    displayName: Install dependencies
+  - script: npx playwright install --with-deps chromium firefox
+    displayName: Install browsers
+  - script: npm run test:smoke
+    displayName: Smoke tests
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+  - script: npm test
+    displayName: Full regression
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: test-results/junit.xml
+      testRunTitle: Playwright
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    inputs:
+      targetPath: playwright-report
+      artifact: playwright-report
