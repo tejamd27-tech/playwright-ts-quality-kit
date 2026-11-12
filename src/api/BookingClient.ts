@@ -1,14 +1,14 @@
 import { type APIRequestContext, expect } from '@playwright/test';
 import { env } from '../config/env';
 
-export interface Booking {
+export type Booking = {
   firstname: string;
   lastname: string;
   totalprice: number;
   depositpaid: boolean;
   bookingdates: { checkin: string; checkout: string };
   additionalneeds?: string;
-}
+};
 
 /** Thin typed client so tests read as behaviour, not HTTP plumbing. */
 export class BookingClient {
